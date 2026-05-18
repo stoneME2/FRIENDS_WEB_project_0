@@ -13,16 +13,36 @@ app.get("/", (req, res) => {
 });
 
 app.post("/signup", async (req, res) => {
-  const { nickname, email, password } = req.body;
-  await prisma.user.create({
-    data: {
-      nickname,
-      email,
-      password,
-    },
-  });
-  res.send("정상적으로 회원가입이 완료되었습니다.");
-  console.log("정상적으로 회원가입이 완료되었습니다.");
+  try {
+    const { nickname, email, password } = req.body;
+
+    if (!nickname || !email || !password) {
+      throw new Error("400");
+    }
+    const user = await prisma.user.findUnique({
+      where: {
+        email,
+      },
+    });
+    if (email == user?.email) {
+      throw new Error("409");
+    }
+    await prisma.user.create({
+      data: {
+        nickname,
+        email,
+        password,
+      },
+    });
+    res.send("정상적으로 회원가입이 완료되었습니다.");
+  } catch (err) {
+    if (err instanceof Error) {
+      if (err.message === "400")
+        return res.status(400).json("빠진 문항이 없도록 작성해주세요.");
+      if (err.message === "409")
+        return res.status(409).json("중복된 이메일입니다.");
+    }
+  }
 });
 
 app.listen(3000, () => {
