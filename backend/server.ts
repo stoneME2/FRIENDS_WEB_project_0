@@ -4,8 +4,8 @@ import { PrismaClient } from "@prisma/client";
 import jwt, { TokenExpiredError } from "jsonwebtoken";
 
 const prisma = new PrismaClient();
-
 const app = express();
+const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
 
@@ -77,7 +77,7 @@ app.post("/login", async (req, res) => {
       },
       process.env.SECRET_KEY!,
       {
-        expiresIn: "15m",
+        expiresIn: process.env.EXPIREIN! as jwt.SignOptions["expiresIn"], //env 값은 런타임에 들어옴, expiresIn => 특수 타입으로 정의되어 있음 ex) "15m"
       },
     );
 
@@ -130,6 +130,6 @@ app.get("/me", async (req, res) => {
   }
 });
 
-app.listen(3000, () => {
+app.listen(PORT, () => {
   console.log("서버가 3000 포트에서 정상적으로 실행 중입니다.");
 });
