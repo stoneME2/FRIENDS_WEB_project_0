@@ -4,6 +4,8 @@
     "target": "ES2022",
     "rootDir": "./src",
     "outDir": "./dist",
-    "strict": true
-  }
+    "strict": true,
+    "typeRoots": ["./node_modules/@types", "./src/types"]
+  },
+  "include": ["src/**/*"]
 }

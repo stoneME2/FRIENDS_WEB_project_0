@@ -1,7 +1,8 @@
 import "dotenv/config";
 import express from "express";
 import { PrismaClient } from "@prisma/client";
-import jwt, { TokenExpiredError } from "jsonwebtoken";
+import jwt from "jsonwebtoken";
+import { verifyToken } from "./middleware/auth.middleware";
 
 const prisma = new PrismaClient();
 const app = express();
@@ -91,45 +92,15 @@ app.post("/login", async (req, res) => {
   }
 });
 
-interface JwtPaylod {
-  type: string;
-  user: string;
-  email: string;
-}
-
-app.get("/me", async (req, res) => {
-  try {
-    const authHeader = req.headers.authorization;
-
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
-      return res.status(401).json({ message: "인증이 유효하지 않습니다." });
-    }
-
-    const token = authHeader.split(" ")[1];
-
-    const decoded = jwt.verify(token, process.env.SECRET_KEY!) as JwtPaylod; //verify 결과 JwtPayload 타입 단언
-
-    const userId = decoded.user;
-
-    const user = await prisma.user.findUnique({
-      where: {
-        id: userId,
-      },
-    });
-
-    return res.status(200).json({ user });
-  } catch (err) {
-    console.error(err);
-
-    if (err instanceof TokenExpiredError) {
-      //err.message === 'jwt expired' 정확한 타입 인지를 위함
-      return res.status(403).json({ message: "토큰이 만료되었습니다." });
-    }
-
-    return res.status(500).json({ message: "서버 에러가 발생했습니다." });
-  }
+app.get("/me", verifyToken, (req, res) => {
+  const { email, nickname } = req.user!;
+  return res.status(200).json({ email, nickname});
 });
 
-app.listen(PORT, () => {
+app.listen(PORT, (err) => {
+  if(err) {
+    console.error('서버 실행 실패:', err);
+    return;
+  }
   console.log("서버가 3000 포트에서 정상적으로 실행 중입니다.");
 });
