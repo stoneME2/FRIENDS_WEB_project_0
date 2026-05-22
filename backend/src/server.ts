@@ -3,6 +3,7 @@ import express from "express";
 import { PrismaClient } from "@prisma/client";
 import jwt from "jsonwebtoken";
 import { verifyToken } from "./middleware/auth.middleware";
+import bcrypt from "bcrypt";
 
 const prisma = new PrismaClient();
 const app = express();
@@ -24,6 +25,8 @@ app.post("/signup", async (req, res) => {
         .json({ message: "모든 항목을 작성해주시길 바랍니다." });
     }
 
+    const hashedPassword = await bcrypt.hash(password,10);
+
     const user = await prisma.user.findUnique({
       where: {
         email,
@@ -38,7 +41,7 @@ app.post("/signup", async (req, res) => {
       data: {
         nickname,
         email,
-        password,
+        password: hashedPassword,
       },
     });
     res.send("정상적으로 회원가입이 완료되었습니다.");
@@ -49,7 +52,7 @@ app.post("/signup", async (req, res) => {
 });
 
 app.post("/login", async (req, res) => {
-  try {
+  try { 
     const { email, password } = req.body;
 
     if (!email || !password) {
@@ -62,11 +65,19 @@ app.post("/login", async (req, res) => {
       where: { email },
     });
 
+    console.log(user?.password);
+
     if (!user) {
       return res.status(404).json({ message: "존재하지 않는 이메일입니다." });
     }
 
-    if (req.body.password !== user.password) {
+    console.log('진입 완료')
+
+    
+    const passwordValid = await bcrypt.compare(password, user.password);
+    
+    console.log(passwordValid);
+    if (!passwordValid) {
       return res.status(401).json({ message: "비밀번호가 일치하지 않습니다." });
     }
 
