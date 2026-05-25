@@ -1,8 +1,9 @@
 import bcrypt from "bcrypt";
 import { createUser, findEmailUser } from "./user.repository";
 import jwt from "jsonwebtoken";
+import { SignupDto, LoginDto } from "./user.dto";
 
-export async function signupUserService(user: any) {
+export async function signupUserService(user: SignupDto) {
   const { nickname, email, password } = user;
 
   if (!nickname || !email || !password) {
@@ -20,7 +21,7 @@ export async function signupUserService(user: any) {
   return createUser(nickname, email, hashedPassword);
 }
 
-export async function loginUserService(user: any) {
+export async function loginUserService(user: LoginDto) {
 
   const { email, password } = user;
 
@@ -55,11 +56,11 @@ export async function loginUserService(user: any) {
   return token;
 }
 
-export function getUserService(user:any) {
+export function getUserService(user: any) {
       const { email, nickname } = user;
 
       return {
-        email: user.email, 
-        nickname: user.nickname,
+        email, 
+        nickname,
       };
 }

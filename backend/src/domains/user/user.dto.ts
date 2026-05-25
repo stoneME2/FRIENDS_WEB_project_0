@@ -1,9 +1,10 @@
-export interface userResponseDto {
-    id: string;
+export interface SignupDto {
     email: string;
+    password: string;
     nickname: string;
 }
 
-export interface userRequestDto {
-    
+export interface LoginDto {
+    email: string;
+    password: string;
 }

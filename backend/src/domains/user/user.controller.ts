@@ -9,7 +9,7 @@ export const signupController = async (req: Request, res: Response) => {
   try {
     const result = await signupUserService(req.body);
 
-    return res.status(200).json(result);
+    return res.status(201).json(result);
   } catch (err) {
     console.error(err);
 
@@ -47,9 +47,9 @@ export const loginUserController = async (req: Request, res: Response) => {
   }
 };
 
-export const getMeController = async (req: Request, res: Response) => {
+export const getMeController = (req: Request, res: Response) => {
   try {
-    const result = await getUserService(req.body);
+    const result = getUserService(req.body);
 
     return res.status(200).json({ result });
   } catch (err) {

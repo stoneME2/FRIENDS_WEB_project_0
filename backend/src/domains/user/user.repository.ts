@@ -19,4 +19,3 @@ export function createUser(nickname: any, email: any, hashedPassword: any) {
     },
   });
 }
-
