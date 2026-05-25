@@ -1,17 +1,17 @@
-import { PrismaClient } from "@prisma/client/extension";
+import { PrismaClient } from "@prisma/client";
 
-const prisma = PrismaClient();
+const prisma = new PrismaClient();
 
 export function findEmailUser(email: any) {
-  prisma.user.findUnique({
+  return prisma.user.findUnique({
     where: {
       email,
     },
   });
 }
 
-export function signup(nickname: any, email: any, hashedPassword: any) {
-  prisma.user.create({
+export function createUser(nickname: any, email: any, hashedPassword: any) {
+  return prisma.user.create({
     data: {
       nickname,
       email,
@@ -19,3 +19,4 @@ export function signup(nickname: any, email: any, hashedPassword: any) {
     },
   });
 }
+

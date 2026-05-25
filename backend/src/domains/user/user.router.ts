@@ -1,6 +1,9 @@
 import express from "express";
-import { signup } from "./user.controller";
+import { signupController, loginUserController } from "./user.controller";
+import { verifyToken } from "../../middleware/auth.middleware";
 
 const app = express();
 
-app.post("/signup", signup);
+app.post("/signup", signupController);
+app.post("/login", loginUserController);
+app.get("/me", verifyToken, );
