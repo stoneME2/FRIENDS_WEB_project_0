@@ -49,7 +49,7 @@ export const loginUserController = async (req: Request, res: Response) => {
 
 export const getMeController = (req: Request, res: Response) => {
   try {
-    const result = getUserService(req.body);
+    const result = getUserService(req.user!);
 
     return res.status(200).json({ result });
   } catch (err) {

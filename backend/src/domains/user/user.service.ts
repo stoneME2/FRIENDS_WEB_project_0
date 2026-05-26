@@ -1,9 +1,17 @@
 import bcrypt from "bcrypt";
 import { createUser, findEmailUser } from "./user.repository";
 import jwt from "jsonwebtoken";
-import { SignupDto, LoginDto } from "./user.dto";
+import {
+  SignupDto,
+  LoginDto,
+  LoginResponseDto,
+  MeResponseDto,
+} from "./user.dto";
+import { User } from "@prisma/client";
 
-export async function signupUserService(user: SignupDto) {
+export async function signupUserService(
+  user: SignupDto,
+): Promise<MeResponseDto> {
   const { nickname, email, password } = user;
 
   if (!nickname || !email || !password) {
@@ -18,11 +26,17 @@ export async function signupUserService(user: SignupDto) {
 
   const hashedPassword = await bcrypt.hash(password, 10);
 
-  return createUser(nickname, email, hashedPassword);
+  createUser(nickname, email, hashedPassword);
+
+  return {
+    email: user.email,
+    nickname: user.nickname,
+  };
 }
 
-export async function loginUserService(user: LoginDto) {
-
+export async function loginUserService(
+  user: LoginDto,
+): Promise<LoginResponseDto> {
   const { email, password } = user;
 
   if (!email || !password) {
@@ -53,14 +67,14 @@ export async function loginUserService(user: LoginDto) {
     },
   );
 
-  return token;
+  return { token };
 }
 
-export function getUserService(user: any) {
-      const { email, nickname } = user;
+export function getUserService(user: User): MeResponseDto {
+  const { email, nickname } = user;
 
-      return {
-        email, 
-        nickname,
-      };
+  return {
+    email: user.email,
+    nickname: user.nickname,
+  };
 }
