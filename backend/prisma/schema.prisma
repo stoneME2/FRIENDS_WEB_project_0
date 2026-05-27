@@ -13,9 +13,39 @@ datasource db {
 }
 
 model User {
-  id          String    @id @default(cuid())
-  nickname    String
-  email       String    @unique
-  password    String
+  id        String   @id @default(cuid())
+  nickname  String
+  email     String   @unique
+  password  String
+  createdAt DateTime @default(now())
+
+  ownedRooms     Room[]   @relation("RoomOwner") //이거슨 방장 관계임
+  roomMembers RoomMember[]
+
+  @@map("users")
 }
 
+model Room {
+  id        String   @id @default(cuid())
+  name      String
+  createdAt DateTime @default(now())
+  ownerId   String //<실제 형태>
+
+  owner     User     @relation("RoomOwner", fields: [ownerId], references: [id]) //ownerId 기반으로 User 자동 연결해주는 필드 <객체 형태>
+  members RoomMember[]
+
+  @@map("rooms")
+}
+
+model RoomMember {
+  id        String   @id @default(cuid())
+  roomId    String
+  userId    String
+  joinedAt  DateTime  @default(now())
+
+  room Room @relation(fields: [roomId], references: [id])
+  user User @relation(fields: [userId], references: [id])
+
+  @@unique([roomId, userId])
+  @@map("room_members")
+}

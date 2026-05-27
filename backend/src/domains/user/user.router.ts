@@ -2,8 +2,10 @@ import express from "express";
 import { signupController, loginUserController, getMeController } from "./user.controller";
 import { verifyToken } from "../../middleware/auth.middleware";
 
-const app = express();
+const userRouter = express.Router();
 
-app.post("/signup", signupController);
-app.post("/login", loginUserController);
-app.get("/me", verifyToken, getMeController);
+userRouter.post("/register", signupController);
+userRouter.post("/login", loginUserController);
+userRouter.get("/me", verifyToken, getMeController);
+
+export default userRouter;

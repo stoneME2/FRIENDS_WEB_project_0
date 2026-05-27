@@ -26,7 +26,7 @@ export async function signupUserService(
 
   const hashedPassword = await bcrypt.hash(password, 10);
 
-  createUser(nickname, email, hashedPassword);
+  await createUser(nickname, email, hashedPassword);
 
   return {
     email: user.email,

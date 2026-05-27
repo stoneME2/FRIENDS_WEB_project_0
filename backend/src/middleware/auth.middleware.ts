@@ -23,7 +23,7 @@ export const verifyToken = async (req: Request, res: Response, next: NextFunctio
     const decoded = jwt.verify(token, process.env.SECRET_KEY!) as JwtPaylod; //verify 결과 JwtPayload 타입 단언
     
     const userId = decoded.user;
-
+    
     const user = await prisma.user.findUnique({
       where: {
         id: userId,
@@ -35,7 +35,7 @@ export const verifyToken = async (req: Request, res: Response, next: NextFunctio
     }
 
     req.user = user;
-
+  console.log('토큰 무사히 흘러감');
     next();
   } catch (err) {
     console.error(err);
